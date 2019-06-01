@@ -115,7 +115,7 @@ author:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
       url:  "mailto:fritzviljoen@outlook.com"
-    - label: "Website"
+    - label: "LinkedIn"
       icon: "fas fa-fw fa-link"
       url: "https://www.linkedin.com/in/fritzviljoen/"
     - label: "Twitter"
