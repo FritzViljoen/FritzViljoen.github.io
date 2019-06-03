@@ -9,7 +9,7 @@ mathjax: "true"
 
 # Property Investment
 
-{% include figure image_path="/assets/images/cinderella.jpg" alt="this is a placeholder image" caption="Photo credit: [**Unsplash**](https://unsplash.com)" %}
+{% include figure image_path="/assets/images/cinderella.jpg" alt="Photo by Valentin Petkov on Unsplash" caption="Photo by Valentin Petkov on [**Unsplash**](https://unsplash.com)" %}
 
 ### Where do we start?
 A couple of my closest friends recently joined a group encouraging property investment, highlighting the different strategies, how to get investors, where to look, how to go about it. Needless to say, their enthusiasm was contagious, and before we knew it, my wife and I were neck-deep in it too. The group went ahead and started a company, got the web domain, printed some business cards, sorting out all the admin .... and then what?
