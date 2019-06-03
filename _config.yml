@@ -9,9 +9,9 @@ minimal_mistakes_skin    : "dark" # "air", "aqua", "contrast", "dark", "dirt", "
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Fritz Viljoen B.Eng"
+title                    : "Fritz Viljoen"
 title_separator          : "-"
-name                     : "Fritz Viljoen"
+name                     : "Fritz Viljoen B.Eng Mech"
 description              : "Data Science Portfolio"
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
