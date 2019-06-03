@@ -3,12 +3,13 @@ title: "Cinderella - Scrubbing Houses"
 date: 2019-05-01
 tags: [data wrangling, data science, messy data]
 header:
-  image: "assets/images/cinderella.jpg"
 excerpt: "Data Wrangling, Data Science, Messy Data"
 mathjax: "true"
 ---
 
 # Property Investment
+
+{% include figure image_path="/assets/images/cinderella.jpg" alt="this is a placeholder image" caption="Photo credit: [**Unsplash**](https://unsplash.com)" %}
 
 ### Where do we start?
 A couple of my closest friends recently joined a group encouraging property investment, highlighting the different strategies, how to get investors, where to look, how to go about it. Needless to say, their enthusiasm was contagious, and before we knew it, my wife and I were neck-deep in it too. The group went ahead and started a company, got the web domain, printed some business cards, sorting out all the admin .... and then what?
