@@ -51,6 +51,7 @@ df = rent_df.append(sale_df).reset_index(drop=True)
 print(df.shape)
 df.tail()
 ```
+{% include figure image_path = "assets/images/posts/hh-snippit_2.jpg" %}
 
 ### Removing unnecessary characters
 Cleaning of the data allows for easier time reading and visulizing the information
@@ -61,7 +62,10 @@ df = df.replace({r'\r': ' ', r'\n': ' ', '\s+': ' '}, regex=True)
 print(df.shape)
 df.tail()
 ```
-{% include figure image_path = "assets/images/posts/hh-snippit_2.jpg" %}
+
+{% include figure image_path = "assets/images/posts/hh-snippit_3.jpg" %}
+
+
 
 ## Clean and Drop unnecessary columns
 The source data has some additional columns that is not applicable to the project.
@@ -165,6 +169,8 @@ print(rent_df.describe())
 ax_list = rent_df.hist(bins=30, layout=(5, 5), figsize=(15, 15))
 ```
 
+{% include figure image_path = "assets/images/posts/hh-snippit_4.jpg" %}
+
 
 Slicing away the top 0.1% of listings, it is possible to delete to minimum listings. As the maximum monthly rentals of more than 100000 is outside of the scope of this project.
 
@@ -180,6 +186,10 @@ print(rent_df.describe())
 ax_list = rent_df.hist(bins=30, layout=(5, 5), figsize=(15, 15))
 
 ```
+{% include figure image_path = "assets/images/posts/hh-snippit_5.jpg" %}
+
+
+
 
 After adjusting for outlier data, the price histogram has a right skewed distribution. Expected in this case as there would be much more low rent units as high rent units available
 
@@ -193,6 +203,8 @@ rent_df['Rent Price per Room'] = (rent_df['Price']/rent_df['Beds']).round(-2)
 sale_df['Sale Price per Room'] = (sale_df['Price']/sale_df['Beds']).round(-2)
 ax_list = rent_df.hist(bins=30, layout=(5,5), figsize=(15,15))
 ```
+{% include figure image_path = "assets/images/posts/hh-snippit_6.jpg" %}
+
 
 As the saying goes, Location Location Location, rental property is highly subject to area. Comparing the properties only on a price per room basis would result in only looking at opportunities in low income areas. However, we have at our disposal the Suburb of all the listings. By calculating the suburb median price and median Price per room, the value Suburbs would be ranked.
 
@@ -219,6 +231,11 @@ rentalStats_df.tail()
 df = pd.merge(sale_df, rentalStats_df, on=grouping, how='right')
 df.head()
 ```
+
+{% include figure image_path = "assets/images/posts/hh-snippit_7.jpg" %}
+
+
+
 
 
 Python code block:
@@ -305,6 +322,7 @@ displ.style.format({'Address': google_maps,
                     })
 ```
 
+{% include figure image_path = "assets/images/posts/hh-snippit_8.jpg" %}
 
 
 
