@@ -1,6 +1,6 @@
 ---
 title: "Cinderella Part2 - House Hunting - The Data Scientist Way"
-date: 2019-05-01
+date: 2019-06-15
 tags: [data wrangling, data science, messy data]
 header:
 excerpt: "Data Wrangling, Data Science, Messy Data"
@@ -20,12 +20,15 @@ There is still a portion of manual labour involved, having to open a deal to see
 This is how I went about it:
 
 ### Data collation and clean-up
-Housing listings for the city of Cape Town was collected from a well-liked property website, using a web scraper the data was collected in a batch of CSV files. The data was read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. More on this can be found here. 
+Housing listings for the city of Cape Town was collected from a well-liked property website, using a web scraper the data was collected in a batch of CSV files. The data was read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. More on this can be found here.
+
 
 
 
 Python code block:
 ```python
+import pandas as pd
+
 region = 'cape-town'
 
 rent_df = pd.read_csv(region+'_to-rent.csv', low_memory=False)
@@ -34,17 +37,13 @@ print(rent_df.shape, 'to-rent')
 print(sale_df.shape, 'for-sale')
 rent_df.tail()
 ```
+{% include figure image_path = "/posts/hh-snippit_1.jpg" %}
 
-
-
-
-
-
-
-
+_
 Python code block:
 ```python
-
+#  in order to reduce the steps in cleaning the data, the two data sets are combined, defining the source tupe allowes for splitting afterwards.
+defining the data type,
 rent_df['Type'] = 'to-rent'
 sale_df['Type'] = 'for-sale'
 
