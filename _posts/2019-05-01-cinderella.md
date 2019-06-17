@@ -20,70 +20,150 @@ Not really having any better idea, they would take a best guess at a suburb wher
 
 Knowing my skills, they asked me whether I could help de-pain the process, some form of web-scrubber to isolate the information they were looking for...so I did.
 
+
+Used Python modules, in this instance, datetime, pandas & beautifulsoup.
+
 Python code block:
 ```python
-def get_immoafrica(status):
-    import datetime
-    import pandas as pd
-    from urllib.request import urlopen as uReq
-    from bs4 import BeautifulSoup as soup
 
-    df = pd.DataFrame()
-    page_count = int(input('pg= '))
-    for pg in range(page_count):
-        try:
-            url = 'https://www.immoafrica.net/residential/' + status + \
-                '/south-africa/western-cape/cape-metropol/?sort=newest' + \
-                '&pg=' + str(pg+1)
+import datetime
+import pandas as pd
+from urllib.request import urlopen as uReq
+from bs4 import BeautifulSoup as soup
 
-            print('pg= ' + str(pg+1) + ' of ' + str(page_count))
-            uClient = uReq(url)
-            page_html = uClient.read()
-            response = uClient.close
-            page_soup = soup(page_html, "html.parser")
-
-            listingHolder = page_soup.find_all('article', class_='block')
-
-            for listing in listingHolder:
-                parsedListing = {}
-
-                for a in listing.find_all('a', href=True, text=True):
-                    link_text = a['href']
-                    parsedListing['Link'] = link_text
-
-                title = listing.find_all('img')[0].get('title')
-                parsedListing['Title'] = title
-
-                if title.find('Bedroom', 0) < 0:
-                    continue
-
-                title = title.split(' in ')
-                parsedListing['Suburb'] = " ".join(title[1].split())
-
-                parsedListing['Type'] = parsedListing['Title'][parsedListing['Title'].find(' ', 9):
-                                                               parsedListing['Title'].find(' ', 12)]
-
-                parameters = listing.findAll('li')
-                for para in parameters:
-                    try:
-                        value = para.findAll('strong')[0].text
-                        key = " ".join(para.find('strong').next_sibling.split())
-                        if key in ['Bed', 'Bath']:
-                            key = key+'s'
-                        parsedListing[key] = value
-                    except:
-                        None
-
-                df = df.append(parsedListing, ignore_index=True)
-
-        except:
-            continue
-    export_csv = df.to_csv('immoafrica_'+status+'.csv',
-                           index=None, header=True)
+```
 
 
-# get_immoafrica('to-rent')
-# get_immoafrica('for-sale')
+  set up data base in data frame.   read from immoafrica website, used page count to inform the scraper how many pages it should "read". Example, if there are 100 pages, it builds a list of the 100 pages and starts working through the pages, almost like a to-do list.
+
+Python code block:
+```python
+df = pd.DataFrame()
+page_count = int(input('pg= '))
+for pg in range(page_count):
+    try:
+        url = 'https://www.immoafrica.net/residential/' + status + \
+            '/south-africa/western-cape/cape-metropol/?sort=newest' + \
+            '&pg=' + str(pg+1)
+
+        print('pg= ' + str(pg+1) + ' of ' + str(page_count))
+
+        ```
+
+
+        
+
+Python code block:
+```python
+
+
+uClient = uReq(url)
+page_html = uClient.read()
+response = uClient.close
+page_soup = soup(page_html, "html.parser")
+
+listingHolder = page_soup.find_all('article', class_='block')
+
+
+```
+
+
+
+
+
+
+Python code block:
+```python
+for listing in listingHolder:
+    parsedListing = {}
+
+    for a in listing.find_all('a', href=True, text=True):
+        link_text = a['href']
+        parsedListing['Link'] = link_text
+
+    title = listing.find_all('img')[0].get('title')
+    parsedListing['Title'] = title
+
+    if title.find('Bedroom', 0) < 0:
+        continue
+
+    title = title.split(' in ')
+    parsedListing['Suburb'] = " ".join(title[1].split())
+
+    parsedListing['Type'] = parsedListing['Title'][parsedListing['Title'].find(' ', 9):
+                                                   parsedListing['Title'].find(' ', 12)]
+
+ ```
+
+
+Python code block:
+```python
+parameters = listing.findAll('li')
+for para in parameters:
+    try:
+        value = para.findAll('strong')[0].text
+        key = " ".join(para.find('strong').next_sibling.split())
+        if key in ['Bed', 'Bath']:
+            key = key+'s'
+        parsedListing[key] = value
+    except:
+        None
+
+```
+
+
+Python code block:
+```python
+
+df = df.append(parsedListing, ignore_index=True)
+
+```
+
+
+Python code block:
+```python
+
+
+
+export_csv = df.to_csv('immoafrica_'+status+'.csv',
+       index=None, header=True)
+
+```
+
+
+
+Python code block:
+```python
+
+```
+
+
+Python code block:
+```python
+
+```
+
+
+Python code block:
+```python
+
+```
+
+
+Python code block:
+```python
+
+```
+
+
+Python code block:
+```python
+
+```
+
+
+Python code block:
+```python
 
 ```
 
