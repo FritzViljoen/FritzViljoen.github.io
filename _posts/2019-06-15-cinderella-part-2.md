@@ -123,6 +123,8 @@ df['Price'] = df['Price'].astype(float)
 
 df.fillna('', inplace=True)
 
+df['Address'] = df['Address'].map(str) + ' ' + df['Suburb'].map(str) + ' ' + df['Region'].map(str)
+
 print(df.shape, 'After')
 ```
 
@@ -196,10 +198,10 @@ ax_list = rent_df.hist(bins=30, layout=(5,5), figsize=(15,15))
 As the saying goes, rental yield is highly subject to Location. Comparing the properties only on a price per room basis would result in only looking at opportunities in low socio-economic areas. However, by calculating the suburb median price and median price per room, the properties can be ranked comparatively in each suburb.
 
 ```python
-grouping = ['Suburb', 'Region','Beds']
+grouping = ['Suburb', 'Region', 'Beds']
 
 rentalStats_df = pd.DataFrame()
-# Rental Count is a confidace indicator, as the larger the rental listings in an area the more robust analysis
+# Rental Count is a confidence indicator, as the larger the rental listings in an area the more robust analysis
 rentalStats_df['Rent Count'] = rent_df.groupby(grouping).count()['Price']
 
 # Median values are used as the median is more robust against outliers
@@ -210,9 +212,6 @@ rentalStats_df.reset_index(inplace=True)
 
 export_csv = rentalStats_df.to_csv(region+'_rental-stats.csv', index=None, header=True)
 rentalStats_df.tail()
-
-df = pd.merge(sale_df, rentalStats_df, on=grouping, how='right')
-df.head()
 ```
 
 {% include figure image_path = "assets/images/posts/hh-snippit_7.jpg" %}
@@ -226,16 +225,11 @@ retailStats_df['Listing Count'] = sale_df.groupby(grouping).count()['Price']
 
 retailStats_df['Sale Price Median'] = (sale_df.groupby(grouping).median()['Price']).round(-3)
 
-
 retailStats_df['Sale Price per Room Median'] = (sale_df.groupby(grouping).median()['Sale Price per Room']).round(-3)
 retailStats_df.reset_index(inplace=True)
 
-
 export_csv = retailStats_df.to_csv(region+'_retail-stats.csv', index=None, header=True)
 retailStats_df.tail()
-
-df = pd.merge(df, retailStats_df, on=grouping, how='right')
-df.head()
 ```
 
 ## Shortlisting
@@ -246,21 +240,29 @@ With our data set nicely calculated, we now have a few possibilities to sort our
 3) For Buy to flip, we're looking for the cheapest property relative to a suburb. For this, we rank the properties based on the Purchase Price versus the Median Purchase Price for the suburb.  
 
 ### Calculating the Ratios
+```python
+df = pd.merge(rent_df, rentalStats_df, on=grouping, how='right')
+
+# Rent to Rent Ranking
+df['Rental Ratio'] = df['Rent Price per Room'] / df['Rent Price per Room Median']
+
+rental_df = df.sort_values('Rental Ratio', ascending=False)
+rental_df.head()
+```
 
 ```python
-df['Address'] = df['Address'].map(str) + ' ' + df['Suburb'].map(str) + ' ' + df['Region'].map(str)
-df['Listing Description'] = df['Address'].map(str) + ' ' + df['Title'].map(str)
-df['Listing Description'] = df['Listing Description'].str.lower()
+df = pd.merge(sale_df, rentalStats_df, on=grouping, how='right')
+df = pd.merge(df, retailStats_df, on=grouping, how='right')
 
-#df = df.apply(pd.to_numeric, errors='ignore')
-df['Sale Price per Room'] = (df['Price']/df['Beds']).round(-3)
-
+# Buy to Rent Ranking
 df['1% Rule'] = df['Rent Price per Room Median'] / df['Sale Price per Room']*100
+
+# Buy to Flip Ranking
+df['Sale Price per Room'] = (df['Price']/df['Beds']).round(-3)
 df['Sale Ratio'] = df['Sale Price per Room'] / df['Sale Price per Room Median']
 
-df = df.sort_values('1% Rule', ascending=False)
-
-df.head()
+retail_df = df.sort_values('1% Rule', ascending=False)
+retail_df.head()
 ```
 
 
@@ -271,31 +273,21 @@ df.head()
 def property_link(path):
     return '<a target="_blank" href="{}">{}</a>'.format(str(path), 'Listing')
 
-
+# Adding Google maps address link
 def google_maps(Address):
     path = ('https://www.google.com/maps/place/' +
             str(Address)).replace(' ', '+')
     return '<a target="_blank" href="{}">{}</a>'.format(path, Address)
 
-
+# Adding listing Image
 def path_to_image_html(path):
     return '<img src="' + str(path) + '" ' + 'style="width:150px;">'
 
-
-displ = df[df['Listing Description'].str.contains(('stell').lower())]
-displ = displ[displ['Beds'] == 3]
-
-
-displ = displ.head(1000)
-
-# print(displ.shape)
-
-del displ['Listing Description']
-
-displ.drop(columns=['Description', 'Sale Price per Room', 'Sale Price per Room Median',
-                    'Listing Number', 'Rent Price Median',
-                    'Price Description',  'Region',
-                    'Type', 'Updated', 'Property Features'], inplace=True, errors='ignore')
+displ = df.head(1000)
+displ.drop(columns=['Description', 'Sale Price per Room', 'Region',
+                    'Listing Number', 'Rent Price Median', 'Type',
+                    'Price Description', 'Sale Price per Room Median',
+                    'Property Features'], inplace=True, errors='ignore')
 
 displ.style.format({'Address': google_maps,
                     'Listing Image': path_to_image_html,
