@@ -283,7 +283,7 @@ def google_maps(Address):
 def path_to_image_html(path):
     return '<img src="' + str(path) + '" ' + 'style="width:150px;">'
 
-displ = df.head(1000)
+displ = retail_df.head(1000)
 displ.drop(columns=['Description', 'Sale Price per Room', 'Region',
                     'Listing Number', 'Rent Price Median', 'Type',
                     'Price Description', 'Sale Price per Room Median',
