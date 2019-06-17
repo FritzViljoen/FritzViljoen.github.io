@@ -25,16 +25,15 @@ Used Python modules, in this instance, datetime, pandas & beautifulsoup.
 
 Python code block:
 ```python
-
 import datetime
 import pandas as pd
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
-
 ```
 
 
-  set up data base in data frame.   read from immoafrica website, used page count to inform the scraper how many pages it should "read". Example, if there are 100 pages, it builds a list of the 100 pages and starts working through the pages, almost like a to-do list.
+set up data base in data frame.   read from immoafrica website, used page count to inform the scraper how many pages it should "read". Example, if there are 100 pages, it builds a list of the 100 pages and starts working through the pages, almost like a to-do list.
+
 
 Python code block:
 ```python
@@ -47,30 +46,25 @@ for pg in range(page_count):
             '&pg=' + str(pg+1)
 
         print('pg= ' + str(pg+1) + ' of ' + str(page_count))
+```
 
-        ```
 
+get raw source code from website, then read it into beautifulsoup which breaks up the code into usable chunks of data, tables, pictures, etc.
 
-        
+next step, is to identify the portions of the code which covers only the listings on each page. For each of these "100 pages", we create a listing holder for only the listings on that page.
 
 Python code block:
 ```python
-
-
 uClient = uReq(url)
 page_html = uClient.read()
 response = uClient.close
 page_soup = soup(page_html, "html.parser")
 
 listingHolder = page_soup.find_all('article', class_='block')
-
-
 ```
 
 
-
-
-
+then, we fetch the specific information in each of the listings visible on the root page / summary page of the listings. for our analysis and data integrity, we need to get consistent information for each listing, so we try to focus on retrieving only the information which is consistently in each of the listings. for this page, it was Asking Price, number of bedrooms, bathrooms, Size and rate per square metre.  
 
 Python code block:
 ```python
@@ -93,24 +87,22 @@ for listing in listingHolder:
     parsedListing['Type'] = parsedListing['Title'][parsedListing['Title'].find(' ', 9):
                                                    parsedListing['Title'].find(' ', 12)]
 
- ```
 
-
-Python code block:
-```python
-parameters = listing.findAll('li')
-for para in parameters:
-    try:
-        value = para.findAll('strong')[0].text
-        key = " ".join(para.find('strong').next_sibling.split())
-        if key in ['Bed', 'Bath']:
-            key = key+'s'
-        parsedListing[key] = value
-    except:
-        None
+    parameters = listing.findAll('li')
+    for para in parameters:
+        try:
+            value = para.findAll('strong')[0].text
+            key = " ".join(para.find('strong').next_sibling.split())
+            if key in ['Bed', 'Bath']:
+                key = key+'s'
+            parsedListing[key] = value
+        except:
+            None
 
 ```
 
+
+then i append it to the other data in my database.
 
 Python code block:
 ```python
@@ -120,10 +112,10 @@ df = df.append(parsedListing, ignore_index=True)
 ```
 
 
+and finally, saving the data as a CSV file for further analysis.
+
 Python code block:
 ```python
-
-
 
 export_csv = df.to_csv('immoafrica_'+status+'.csv',
        index=None, header=True)
@@ -131,41 +123,6 @@ export_csv = df.to_csv('immoafrica_'+status+'.csv',
 ```
 
 
-
-Python code block:
-```python
-
-```
-
-
-Python code block:
-```python
-
-```
-
-
-Python code block:
-```python
-
-```
-
-
-Python code block:
-```python
-
-```
-
-
-Python code block:
-```python
-
-```
-
-
-Python code block:
-```python
-
-```
 
 And to my astonishment, the deals that floated to the top were spot-on! Catching even the most obscure little deals hiding in the shadows.
 
