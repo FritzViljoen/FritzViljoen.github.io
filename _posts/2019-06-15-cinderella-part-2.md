@@ -11,19 +11,21 @@ mathjax: "true"
 
 {% include figure image_path="/assets/images/cinderella.jpg" alt="Photo by Valentin Petkov on Unsplash" caption="Photo by Valentin Petkov on [**Unsplash**](https://unsplash.com)" %}
 
-### Making Sense
+# Making Sense
 
 So the next step was to make sense of the data, and dress it to make it useable. Taking the CSV files, we read it, clean it, analyse it, add some additional functionality, then present it in a user friendly interface. Essentially, it is the same data that is available to all on the property website, however I created a method of filtering and shortlisting the properties according to the specific user requirement.
 
-There is still a portion of manual labour involved, having to open a deal to see if it is an outlier, or that gem you are looking for. But Cinderella provided a handy sorting tool to shortlist the listings in order of most to the least likely opportunities, based on your criteria.   
+In this particular case, the client's brief was two-fold: As a property investor, she wanted to be able to easily identify potentially under priced properties in a specific area, specifically for refurbishment, or " flipping" opportunities. Secondly, she wanted the average rental information for each area, in order to consider properties for Buy-to-Rent opportunities.
+
+The end product still has a portion of manual labour involved, having to open a deal to see if it is an outlier, or that gem you are looking for, but Cinderella provided a handy sorting tool to shortlist the listings in order of most- to the least likely opportunities, based on the specific criteria.   
+
 
 This is how I went about it:
 
-### Data collation and clean-up
-Housing listings for the city of Cape Town was collected from a well-liked property website, using a web scraper the data was collected in a batch of CSV files. The data was read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. More on this can be found here.
+## Data collation and clean-up
+Housing listings for the city of Cape Town was collected from a well-liked property website, using a web scraper the data was collated in a batch of CSV files. The data was read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. More on this can be found here.
 
-
-
+In the CSV files, we collected the property information for different regions in South Africa and saved them separately. For this specific client, using Pandas again, we call in the region of Cape Town, both the rental and sales listings.  
 
 Python code block:
 ```python
@@ -37,11 +39,14 @@ print(rent_df.shape, 'to-rent')
 print(sale_df.shape, 'for-sale')
 rent_df.tail()
 ```
-{% include figure image_path = "assets/images/posts/hh-snippit_1.jpg" %}
 
-Python code block:
+This is what it looked like:
+
+{% include figure image_path = "assets/images/posts/hh-snippit_2.jpg" %}
+
+In order to reduce the steps when cleaning the data, the two data sets are combined, but not before I label / defining the source data type for each to enable easy splitting afterwards.
+
 ```python
-#  in order to reduce the steps in cleaning the data, the two data sets are combined, defining the source tupe allowes for splitting afterwards.
 defining the data type,
 rent_df['Type'] = 'to-rent'
 sale_df['Type'] = 'for-sale'
@@ -51,12 +56,10 @@ df = rent_df.append(sale_df).reset_index(drop=True)
 print(df.shape)
 df.tail()
 ```
-{% include figure image_path = "assets/images/posts/hh-snippit_2.jpg" %}
 
-### Removing unnecessary characters
-Cleaning of the data allows for easier time reading and visulizing the information
+### Removing Redundant Characters
+Cleaning of the data allows for easier time reading and visualization of the information.
 
-Python code block:
 ```python
 df = df.replace({r'\r': ' ', r'\n': ' ', '\s+': ' '}, regex=True)
 print(df.shape)
@@ -65,16 +68,11 @@ df.tail()
 
 {% include figure image_path = "assets/images/posts/hh-snippit_3.jpg" %}
 
-
-
-## Clean and Drop unnecessary columns
+### Clean and Drop Unnecessary Columns
 The source data has some additional columns that is not applicable to the project.
-Dropping the columns simplifies the process and makes foe easier reading.
-Additionally some of the column headers has some long naming conventions, maybe we can simplify them as well.
+Dropping the columns simplifies the process and makes for easier reading.
+Additionally some of the column headers has some long naming conventions, which we try to simplify as well.
 
-
-
-Python code block:
 ```python
 df.drop(columns=['SpacerForProfilePic', 'StatusFlags row',
                  'StatusFlag flagOnShow', 'StatusFlag flagNew',
@@ -97,8 +95,8 @@ print(df.columns)
 print(df.shape)
 df.tail()
 ```
-### Removing duplicates.
-Python code block:
+### Removing Duplicates
+
 ```python
 # Removing duplicate listings based on a unique listing number
 print(df.shape, 'Before')
@@ -107,63 +105,54 @@ print(df.shape, 'After')
 df.tail()
 ```
 
-### Working with missing values
-To have any hope of comparing these listings to each other, there is a minimum amount of information needed.
-for this analysis, the crucial information is Beds Baths Price and Suburb.
-all rows missing any one of these pieces of information is discarded.
+### Working with Missing Values
+To have any hope of comparing these listings with each other, there is a minimum amount of information required. All real estate websites have varying information, most aren’t consistent with where they include what detail, for example confusing floor area / building footprint with site area, which distorted the output quite severely.
 
-Python code block:
+For this particular analysis, the crucial information we decided on was the number of Beds, Baths, Listed Sales or Rental Price and Suburb, as this is the most consistently accurate.
+
+All rows missing any one of these pieces of information is discarded as this breaks the calculation.  
+
 ```python
 print(df.shape, 'Before')
 df = df.dropna(axis=0, how='any',
                subset=['Beds', 'Baths', 'Price Description', 'Suburb'])
 
-
 df['Price'] = df['Price Description'].replace({'R': '', ' ': ''}, regex=True)
 df = df[df['Price'].astype(str).str.isnumeric()].copy()
 df['Price'] = df['Price'].astype(float)
-
 
 df.fillna('', inplace=True)
 
 print(df.shape, 'After')
 ```
 
-### After cleaning
-The data it best slit into different data sets as the normalizing of data is subjectively different
+We could have replaced the missing values with averages based on other listings, but this could influence the integrity of the data, and as we had sufficient data, decided to rather discard them instead, and collect them on a separate page without any calculations, to manually brows, just in case the unicorn was hidden there.
 
-Python code block:
+### After Cleaning
+The data is best split into different data sets as the normalizing of data is subjectively different.
+
 ```python
 rent_df = df[df['Type'] == 'to-rent']
 sale_df = df[df['Type'] == 'for-sale']
 rent_df.tail()
 ```
 
-### Normilizing data
-Some of the listing are priced per week, or per day, to normilize the price, the daily and weekly rates should be scaled to a monthly rate.
+### Normalizing the Data
+To further complicate things, some of the listings are priced per week, or per day instead of per month. So, to normalize the price, the daily and weekly rates were scaled to a monthly rate.
 
-
-
-
-
-Python code block:
 ```python
 rent_df.loc[rent_df['Price Additional'] == 'PER DAY', 'Price'] *= 28
 rent_df.loc[rent_df['Price Additional'] == 'PER WEEK', 'Price'] *= 4
 ```
 
+## Getting to Work
+### Estimating Errors
+When plotting the information, most of the data is heavily skewed to the left or lower end of the distribution, which hints at a possibility of outlier data, most likely a result of input or data capturing errors.
 
+Removing them requires insight and domain experience.
 
-## Estimating errors
-Most of the data is heavily skewed to the left or lower end of the distribution, this hints at a possibility of outlier data, probably a result of input or data capturing errors.
+For example, the price histogram shows only one column. Using Pandas Describe, we are able to see some descriptive statistics:
 
-Removing them would require insight and domain experience.
-
-for example
-the price histogram shows only one column.
-Using pandas discribe lets us see some decriptive stastistics.
-
-Python code block:
 ```python
 print(rent_df.describe())
 ax_list = rent_df.hist(bins=30, layout=(5, 5), figsize=(15, 15))
@@ -171,10 +160,8 @@ ax_list = rent_df.hist(bins=30, layout=(5, 5), figsize=(15, 15))
 
 {% include figure image_path = "assets/images/posts/hh-snippit_4.jpg" %}
 
+Using the mean average, we iteratively slice away the top 0.1% of listings, until finally it is possible to build a proper data set while losing the minimum amount of listings. Specifically as the maximum monthly rentals of more than 100 000 is outside of this project scope.
 
-Slicing away the top 0.1% of listings, it is possible to delete to minimum listings. As the maximum monthly rentals of more than 100000 is outside of the scope of this project.
-
-Python code block:
 ```python
 # Removing the highest 0.1% of rental listings
 for column in ['Baths', 'Beds', 'Price']:
@@ -189,16 +176,15 @@ ax_list = rent_df.hist(bins=30, layout=(5, 5), figsize=(15, 15))
 {% include figure image_path = "assets/images/posts/hh-snippit_5.jpg" %}
 
 
+After adjusting for outlier data, the price histogram has the expected skewed distribution, in this case as there would be much more low rent units available than high rent units.
 
+When comparing residential properties, a couple of different strategies are possible. One of the simpler ways to compare different sized properties with each other, we calculate the price per room ratio per area. Using this ratio we able to rank the prospective properties according to possible investor potential.
 
-After adjusting for outlier data, the price histogram has a right skewed distribution. Expected in this case as there would be much more low rent units as high rent units available
+This is not a fool proof system, as the rental price of a one bedroom to a two bedroom is not priced on a one to two ratio. However, as a first sifting process, it provides the user with a general picture of the price points for the different suburbs and where high rental potential can be expected. It is also more useful when looking into commune type Buy-to-Rent properties.  
 
-When comparing residential properties, a couple of different strategies exists. one of the simpler ways is to compare the price per room ratio.
-Using this ratio it is possible to rank the prospective properties according to possible value.
+In the next episode, we will approach the room ratios per units slightly differently, applying some machine learning to evaluate these properties on more equal footing, but for now this is sufficient to get going.
 
-Python code block:
 ```python
-
 rent_df['Rent Price per Room'] = (rent_df['Price']/rent_df['Beds']).round(-2)
 sale_df['Sale Price per Room'] = (sale_df['Price']/sale_df['Beds']).round(-2)
 ax_list = rent_df.hist(bins=30, layout=(5,5), figsize=(15,15))
@@ -206,12 +192,10 @@ ax_list = rent_df.hist(bins=30, layout=(5,5), figsize=(15,15))
 {% include figure image_path = "assets/images/posts/hh-snippit_6.jpg" %}
 
 
-As the saying goes, Location Location Location, rental property is highly subject to area. Comparing the properties only on a price per room basis would result in only looking at opportunities in low income areas. However, we have at our disposal the Suburb of all the listings. By calculating the suburb median price and median Price per room, the value Suburbs would be ranked.
+### Location, Location, Location
+As the saying goes, rental yield is highly subject to Location. Comparing the properties only on a price per room basis would result in only looking at opportunities in low socio-economic areas. However, by calculating the suburb median price and median price per room, the properties can be ranked comparatively in each suburb.
 
-
-Python code block:
 ```python
-
 grouping = ['Suburb', 'Region','Beds']
 
 rentalStats_df = pd.DataFrame()
@@ -224,7 +208,6 @@ rentalStats_df['Rent Price Median'] = (rent_df.groupby(grouping).median()['Price
 rentalStats_df['Rent Price per Room Median'] = (rent_df.groupby(grouping).median()['Rent Price per Room']).round(-2)
 rentalStats_df.reset_index(inplace=True)
 
-
 export_csv = rentalStats_df.to_csv(region+'_rental-stats.csv', index=None, header=True)
 rentalStats_df.tail()
 
@@ -234,13 +217,9 @@ df.head()
 
 {% include figure image_path = "assets/images/posts/hh-snippit_7.jpg" %}
 
+The process is then repeated to establish the sale price per room:
 
-
-
-
-Python code block:
 ```python
-
 retailStats_df = pd.DataFrame()
 retailStats_df['Listing Count'] = sale_df.groupby(grouping).count()['Price']
 # Median values are used as the median is more robust against outliers
@@ -259,11 +238,15 @@ df = pd.merge(df, retailStats_df, on=grouping, how='right')
 df.head()
 ```
 
-If a stratagy of rent to rent where to be followed, a heuristic of a rental ratio could be used to shortlist posible market mispricings.
+## Shortlisting
+With our data set nicely calculated, we now have a few possibilities to sort our listings to find deals for the three basic strategies of property investment: Rent-to-Rent, Buy-to-Rent, and Buy-to-Flip.
 
+1) For Rent-to-Rent, we rank according to a Rent per Room versus the Median Rent per Room ratio for the suburb.  
+2) For Buy-to-Rent, we use the heuristic 1% rule, stating that your rental income per month should ideally be higher than 1% of the purchase price.
+3) For Buy to flip, we're looking for the cheapest property relative to a suburb. For this, we rank the properties based on the Purchase Price versus the Median Purchase Price for the suburb.  
 
+### Calculating the Ratios
 
-Python code block:
 ```python
 df['Address'] = df['Address'].map(str) + ' ' + df['Suburb'].map(str) + ' ' + df['Region'].map(str)
 df['Listing Description'] = df['Address'].map(str) + ' ' + df['Title'].map(str)
@@ -280,7 +263,9 @@ df = df.sort_values('1% Rule', ascending=False)
 df.head()
 ```
 
-Python code block:
+
+### Presenting the Data
+
 ```python
 # Adding link to listing
 def property_link(path):
@@ -322,25 +307,9 @@ displ.style.format({'Address': google_maps,
                     })
 ```
 
+So the end product looks like this, which for ease of use, includes a link to the listing, link to Maps highlighting the suburb, all the various columns on which one can sort, depending on the strategy, and as a final touch - a thumbnail image of the main listing picture, to easily identify what property you're dealing with.
+
 {% include figure image_path = "assets/images/posts/hh-snippit_8.jpg" %}
 
 
-
-And to my astonishment, the deals that floated to the top were spot-on! Catching even the most obscure little deals hiding in the shadows.
-
-
-
-Property-Scrubber, my wife named “Cinderella” also allowed them to filter through all the suburbs in their reach, not only single suburbs at a time, but the best deal at any given time, anywhere!!
-
-
-
-This is how I went about it....
-
-
-Different strategies: Flips and Buy to rent. All real estate websites have varying information, most aren’t even consistent with where they include what detail — confusing floor area with site area....yeah.
-
-
-Different approaches, use room to average cost ratio.
-
-
-B2R — cost of room to average rent.
+And to the client's delight, the deals that floated to the top were spot-on! Catching even the most obscure little deals hiding in the shadows. By providing the data in this format, the client was able to sort the listings on may more parameters than what the property websites allow, and ultimately significantly cut down on the time spent trawling these websites!
