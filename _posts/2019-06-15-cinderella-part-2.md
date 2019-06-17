@@ -37,9 +37,8 @@ print(rent_df.shape, 'to-rent')
 print(sale_df.shape, 'for-sale')
 rent_df.tail()
 ```
-{% include figure image_path = "/posts/hh-snippit_1.jpg" %}
+{% include figure image_path = "assets/images/posts/hh-snippit_1.jpg" %}
 
-_
 Python code block:
 ```python
 #  in order to reduce the steps in cleaning the data, the two data sets are combined, defining the source tupe allowes for splitting afterwards.
@@ -62,7 +61,7 @@ df = df.replace({r'\r': ' ', r'\n': ' ', '\s+': ' '}, regex=True)
 print(df.shape)
 df.tail()
 ```
-
+{% include figure image_path = "assets/images/posts/hh-snippit_2.jpg" %}
 
 ## Clean and Drop unnecessary columns
 The source data has some additional columns that is not applicable to the project.
