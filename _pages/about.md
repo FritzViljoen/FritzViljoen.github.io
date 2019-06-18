@@ -2,7 +2,7 @@
 title: "About"
 permalink: /about/
 header:
-image: "assets/images/banner_about.jpg"
+  image: "/assets/images/banner_about.jpg"
 ---
 Learning and problem-solving are my lifelong passions. I love absorbing information and exploring new technologies, constantly looking out for the brilliant life hacks that makes life easier.
 
