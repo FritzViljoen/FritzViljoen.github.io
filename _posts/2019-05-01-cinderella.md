@@ -1,9 +1,9 @@
 ---
-title: "Cinderella - Scrubbing Houses"
+title: "Cinderella - Web Scrubbing Houses "
 date: 2019-05-01
-tags: [data wrangling, data science, messy data]
+tags: [data wrangling, data science, messy data, web scrubbing]
 header:
-excerpt: "Data Wrangling, Data Science, Messy Data"
+excerpt: "Data Wrangling, Data Science, Messy Data, Web Scrubbing"
 mathjax: "true"
 ---
 
@@ -21,7 +21,7 @@ Not really having any better idea, they would take a best guess at a suburb wher
 Knowing my skills, they asked me whether I could help de-pain the process, some form of web-scrubber to isolate the information they were looking for...so I did.
 
 
-Used Python modules, in this instance, datetime, pandas & beautifulsoup.
+Leveraging Python and its community driven libraries like, Pandas & BeautifulSoup.
 
 Python code block:
 ```python
@@ -38,14 +38,21 @@ set up data base in data frame.   read from immoafrica website, used page count 
 Python code block:
 ```python
 df = pd.DataFrame()
-page_count = int(input('pg= '))
-for pg in range(page_count):
+pg = 1
+while True:
     try:
         url = 'https://www.immoafrica.net/residential/' + status + \
             '/south-africa/western-cape/cape-metropol/?sort=newest' + \
-            '&pg=' + str(pg+1)
+            '&pg=' + str(pg)
+        uClient = uReq(url)
+        page_html = uClient.read()
+        response = uClient.close
+        page_soup = soup(page_html, "html.parser")
 
-        print('pg= ' + str(pg+1) + ' of ' + str(page_count))
+        pagination = page_soup.find('div', class_='pagination-holder').ul.find_all("a")
+        page_count = max([int(tag.text) if (tag.text).isdigit() else 0 for tag in pagination])
+
+        print(url,'of ' + str(page_count))
 ```
 
 
