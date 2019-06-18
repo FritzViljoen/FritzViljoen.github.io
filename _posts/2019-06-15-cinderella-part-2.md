@@ -13,9 +13,9 @@ mathjax: "true"
 
 # Making Sense
 
-So the next step was to make sense of the data, and dress it to make it useable. Taking the CSV files, we read it, clean it, analyse it, add some additional functionality, then present it in a user friendly interface. Essentially, it is the same data that is available to all on the property website, however I created a method of filtering and shortlisting the properties according to the specific user requirement.
+So, the next step was to make sense of the data and dress it to make it useable. Taking the CSV files, we read it, clean it, analyse it, add some additional functionality, then present it in a user-friendly interface. Essentially, it is the same data that is available to all on the property website, however I created a method of filtering and shortlisting the properties according to the specific user requirements.
 
-In this particular case, the client's brief was two-fold: As a property investor, she wanted to be able to easily identify potentially under priced properties in a specific area, specifically for refurbishment, or " flipping" opportunities. Secondly, she wanted the average rental information for each area, in order to consider properties for Buy-to-Rent opportunities.
+In this case, the client's brief was two-fold: As a property investor, she wanted to be able to easily identify potentially under-priced properties in a specific area, specifically for refurbishment, or " flipping" opportunities. Secondly, she wanted the average rental information for each area, in order to consider properties for Buy-to-Rent opportunities.
 
 The end product still has a portion of manual labour involved, having to open a deal to see if it is an outlier, or that gem you are looking for, but Cinderella provided a handy sorting tool to shortlist the listings in order of most- to the least likely opportunities, based on the specific criteria.   
 
@@ -23,7 +23,7 @@ The end product still has a portion of manual labour involved, having to open a 
 This is how I went about it:
 
 ## Data collation and clean-up
-Housing listings for the city of Cape Town was collected from a well-liked property website, using a web scraper the data was collated in a batch of CSV files. The data was read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. More on this can be found here.
+Housing listings for the city of Cape Town was collected from a well-liked property website, using a web scraper the data was collated in a batch of CSV files. The data was read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project.
 
 In the CSV files, we collected the property information for different regions in South Africa and saved them separately. For this specific client, using Pandas again, we call in the region of Cape Town, both the rental and sales listings.  
 
@@ -44,10 +44,10 @@ This is what it looked like:
 
 {% include figure image_path = "assets/images/posts/hh-snippit_2.jpg" %}
 
-In order to reduce the steps when cleaning the data, the two data sets are combined, but not before I label / defining the source data type for each to enable easy splitting afterwards.
+In order to reduce the steps when cleaning the data, the two data sets are combined, but not before labelling the source data type for each to enable easy splitting afterwards.
 
 ```python
-defining the data type,
+# defining the data type
 rent_df['Type'] = 'to-rent'
 sale_df['Type'] = 'for-sale'
 
@@ -69,9 +69,9 @@ df.tail()
 {% include figure image_path = "assets/images/posts/hh-snippit_3.jpg" %}
 
 ### Clean and Drop Unnecessary Columns
-The source data has some additional columns that is not applicable to the project.
-Dropping the columns simplifies the process and makes for easier reading.
-Additionally some of the column headers has some long naming conventions, which we try to simplify as well.
+The source data has some additional columns that is not applicable to this project.
+Dropping the columns simplifies the process and makes for easier reading and data exploration.
+Additionally, some of the column headers has some long naming conventions, shorter names would be better.
 
 ```python
 df.drop(columns=['SpacerForProfilePic', 'StatusFlags row',
@@ -108,9 +108,10 @@ df.tail()
 ### Working with Missing Values
 To have any hope of comparing these listings with each other, there is a minimum amount of information required. All real estate websites have varying information, most aren’t consistent with where they include what detail, for example confusing floor area / building footprint with site area, which distorted the output quite severely.
 
-For this particular analysis, the crucial information we decided on was the number of Beds, Baths, Listed Sales or Rental Price and Suburb, as this is the most consistently accurate.
+For this analysis, the crucial information we decided on was the number of Beds, Baths, Listed Sales or Rental Price and Suburb, as this is the most consistently accurate.
 
 All rows missing any one of these pieces of information is discarded as this breaks the calculation.  
+Listing price also had some non-numeric values in there. As this is a crucial column its prudent to drop the record.
 
 ```python
 print(df.shape, 'Before')
@@ -128,10 +129,10 @@ df['Address'] = df['Address'].map(str) + ' ' + df['Suburb'].map(str) + ' ' + df[
 print(df.shape, 'After')
 ```
 
-We could have replaced the missing values with averages based on other listings, but this could influence the integrity of the data, and as we had sufficient data, decided to rather discard them instead, and collect them on a separate page without any calculations, to manually brows, just in case the unicorn was hidden there.
+We could have replaced the missing values with averages based on other listings, but this could influence the integrity of the data, and as we had sufficient data, decided to rather discard them instead, and collect them on a separate page without any calculations, to manually browse, just in case the unicorn was hidden there.
 
 ### After Cleaning
-The data is best split into different data sets as the normalizing of data is subjectively different.
+The data is best split into different data sets as the normalizing of rental vs sales data is subjectively different.
 
 ```python
 rent_df = df[df['Type'] == 'to-rent']
@@ -153,7 +154,7 @@ When plotting the information, most of the data is heavily skewed to the left or
 
 Removing them requires insight and domain experience.
 
-For example, the price histogram shows only one column. Using Pandas Describe, we are able to see some descriptive statistics:
+Using Pandas Describe, we are able to see some descriptive statistics: For example, the price histogram shows only one column.
 
 ```python
 print(rent_df.describe())
@@ -162,7 +163,7 @@ ax_list = rent_df.hist(bins=30, layout=(5, 5), figsize=(15, 15))
 
 {% include figure image_path = "assets/images/posts/hh-snippit_4.jpg" %}
 
-Using the mean average, we iteratively slice away the top 0.1% of listings, until finally it is possible to build a proper data set while losing the minimum amount of listings. Specifically as the maximum monthly rentals of more than 100 000 is outside of this project scope.
+Using the mean average, we iteratively slice away the top 0.1% of listings, until finally it is possible to build a proper data set while losing the minimum number of listings.
 
 ```python
 # Removing the highest 0.1% of rental listings
@@ -178,9 +179,9 @@ ax_list = rent_df.hist(bins=30, layout=(5, 5), figsize=(15, 15))
 {% include figure image_path = "assets/images/posts/hh-snippit_5.jpg" %}
 
 
-After adjusting for outlier data, the price histogram has the expected skewed distribution, in this case as there would be much more low rent units available than high rent units.
+After adjusting for outlier data, the price histogram has an expected skewed distribution, in this case as expected there would be more low rent units available than high rent units.
 
-When comparing residential properties, a couple of different strategies are possible. One of the simpler ways to compare different sized properties with each other, we calculate the price per room ratio per area. Using this ratio we able to rank the prospective properties according to possible investor potential.
+When comparing residential properties, a couple of different strategies are possible. One of the simpler ways to compare different sized properties with each other, we calculate the price per room ratio per area. Using this ratio, we able to rank the prospective properties according to possible investor potential.
 
 This is not a fool proof system, as the rental price of a one bedroom to a two bedroom is not priced on a one to two ratio. However, as a first sifting process, it provides the user with a general picture of the price points for the different suburbs and where high rental potential can be expected. It is also more useful when looking into commune type Buy-to-Rent properties.  
 

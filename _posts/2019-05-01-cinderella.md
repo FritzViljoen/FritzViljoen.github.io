@@ -124,7 +124,7 @@ and finally, saving the data as a CSV file for further analysis.
 Python code block:
 ```python
 
-export_csv = df.to_csv('immoafrica_'+status+'.csv',
+export_csv = df.to_csv(status+'.csv',
        index=None, header=True)
 
 ```
