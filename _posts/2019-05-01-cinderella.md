@@ -31,11 +31,8 @@ from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 ```
 
-
 set up data base in data frame.   read from immoafrica website, used page count to inform the scraper how many pages it should "read". Example, if there are 100 pages, it builds a list of the 100 pages and starts working through the pages, almost like a to-do list.
 
-
-Python code block:
 ```python
 df = pd.DataFrame()
 pg = 1
@@ -60,7 +57,6 @@ get raw source code from website, then read it into beautifulsoup which breaks u
 
 next step, is to identify the portions of the code which covers only the listings on each page. For each of these "100 pages", we create a listing holder for only the listings on that page.
 
-Python code block:
 ```python
 uClient = uReq(url)
 page_html = uClient.read()
@@ -73,7 +69,6 @@ listingHolder = page_soup.find_all('article', class_='block')
 
 then, we fetch the specific information in each of the listings visible on the root page / summary page of the listings. for our analysis and data integrity, we need to get consistent information for each listing, so we try to focus on retrieving only the information which is consistently in each of the listings. for this page, it was Asking Price, number of bedrooms, bathrooms, Size and rate per square metre.  
 
-Python code block:
 ```python
 for listing in listingHolder:
     parsedListing = {}
@@ -111,7 +106,7 @@ for listing in listingHolder:
 
 then i append it to the other data in my database.
 
-Python code block:
+
 ```python
 
 df = df.append(parsedListing, ignore_index=True)
@@ -121,7 +116,7 @@ df = df.append(parsedListing, ignore_index=True)
 
 and finally, saving the data as a CSV file for further analysis.
 
-Python code block:
+
 ```python
 
 export_csv = df.to_csv(status+'.csv',

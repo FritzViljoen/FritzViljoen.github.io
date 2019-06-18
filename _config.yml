@@ -84,7 +84,7 @@ analytics:
 
 # Site Author
 author:
-  name             : "Fritz Viljoen B.Eng Mech"
+  name             : "Fritz Viljoen"
   avatar           : "/assets/images/bio-photo.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Data Science Portfolio"
   location         : "Cape Town, South Africa"
