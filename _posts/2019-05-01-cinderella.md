@@ -12,16 +12,16 @@ mathjax: "true"
 {% include figure image_path="/assets/images/cinderella.jpg" alt="Photo by Valentin Petkov on Unsplash" caption="Photo by Valentin Petkov on [**Unsplash**](https://unsplash.com)" %}
 
 ### Where do we start?
-A couple of my closest friends recently joined a group encouraging property investment, highlighting the different strategies, how to get investors, where to look, how to go about it. Needless to say, their enthusiasm was contagious, and before we knew it, my wife and I were neck-deep in it too. The group went ahead and started a company, got the web domain, printed some business cards, sorting out all the admin .... and then what?
+A couple of my closest friends recently joined a group encouraging property investment, highlighting the different strategies, how to get investors, where to look, how to go about it. Their enthusiasm was contagious, and before we knew it, my wife and I were neck-deep in it too. The group went ahead and started a company, got the web domain, printed some business cards, sorting out all the admin .... and then what?
 
-Their approach was fairly simple look for DEALS, DEALS, DEALS!! Not very concerned with where the property was located, there are many places where one can make money in property. So they started trawling real-estate websites, and painfully, one by one, started going through all listings, hoping to spot that unicorn but finding only donkeys!
+Their approach was simple look for DEALS, DEALS, DEALS!! Not very concerned with where the property was located, there are many places where one can make money in property. So, they started trawling real-estate websites, and painfully, one by one, started going through all listings, hoping to spot that unicorn but finding only donkeys!
 
-Not really having any better idea, they would take a best guess at a suburb where they think the type of deals they were looking for could be found. They had a rough idea about budget, but individually had to draw up a spreadsheet gathering all the variables to see whether the Return on investment ROI was within target.
+Not really having any better idea, they would take a best guess at a suburb where they think the type of deals, they were looking for could be found. They had a rough idea about budget, but individually had to draw up a spreadsheet gathering all the variables to see whether the Return on investment ROI was within target.
 
 Knowing my skills, they asked me whether I could help de-pain the process, some form of web-scrubber to isolate the information they were looking for...so I did.
 
 
-Leveraging Python and its community driven libraries like, Pandas & BeautifulSoup.
+So for this project were going to use Python and its community driven libraries like, Pandas & BeautifulSoup.
 
 Python code block:
 ```python
@@ -31,13 +31,12 @@ from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 ```
 
-set up data base in data frame.   read from immoafrica website, used page count to inform the scraper how many pages it should "read". Example, if there are 100 pages, it builds a list of the 100 pages and starts working through the pages, almost like a to-do list.
-
+The idea is to loop through the listing pages of the property website. So, we need a couple of things.
+Firstly, some were the store the parsed listings, and secondly a way to get the web page html.
 ```python
 df = pd.DataFrame()
 pg = 1
 while True:
-    try:
         url = 'https://www.immoafrica.net/residential/' + status + \
             '/south-africa/western-cape/cape-metropol/?sort=newest' + \
             '&pg=' + str(pg)
@@ -45,105 +44,59 @@ while True:
         page_html = uClient.read()
         response = uClient.close
         page_soup = soup(page_html, "html.parser")
-
-        pagination = page_soup.find('div', class_='pagination-holder').ul.find_all("a")
-        page_count = max([int(tag.text) if (tag.text).isdigit() else 0 for tag in pagination])
-
-        print(url,'of ' + str(page_count))
 ```
 
-
-get raw source code from website, then read it into beautifulsoup which breaks up the code into usable chunks of data, tables, pictures, etc.
-
-next step, is to identify the portions of the code which covers only the listings on each page. For each of these "100 pages", we create a listing holder for only the listings on that page.
-
+Once we start looping through the site pages, how do we know we are finished. As with all things in life there is trade-offs. I went with looking for the maximum page number in the pagination section. Simple enough just break the while loop when the current page count equals the max page count. Simple stuff.
 ```python
-uClient = uReq(url)
-page_html = uClient.read()
-response = uClient.close
-page_soup = soup(page_html, "html.parser")
+pagination = page_soup.find('div', class_='pagination-holder').ul.find_all("a")
+page_count = max([int(tag.text) if (tag.text).isdigit() else 0 for tag in pagination])
+print(url,'of ' + str(page_count))
 
+if pg >= page_count:
+    break
+pg += 1
+```
+
+Next step is to identify the portions of the html that covers only the listings on each page. For each of the pages a listing holder is defined that contains only the listings on that page.
+
+Then looping through the listings, we fetch the specific information of each listing visible on the listing holder page. The Property information is temporary stored in a python dictionary “parsedListing”.
+```python
 listingHolder = page_soup.find_all('article', class_='block')
-```
 
-
-then, we fetch the specific information in each of the listings visible on the root page / summary page of the listings. for our analysis and data integrity, we need to get consistent information for each listing, so we try to focus on retrieving only the information which is consistently in each of the listings. for this page, it was Asking Price, number of bedrooms, bathrooms, Size and rate per square metre.  
-
-```python
 for listing in listingHolder:
     parsedListing = {}
-
     for a in listing.find_all('a', href=True, text=True):
         link_text = a['href']
         parsedListing['Link'] = link_text
 
     title = listing.find_all('img')[0].get('title')
     parsedListing['Title'] = title
-
-    if title.find('Bedroom', 0) < 0:
-        continue
-
     title = title.split(' in ')
     parsedListing['Suburb'] = " ".join(title[1].split())
 
-    parsedListing['Type'] = parsedListing['Title'][parsedListing['Title'].find(' ', 9):
-                                                   parsedListing['Title'].find(' ', 12)]
+```
 
-
-    parameters = listing.findAll('li')
-    for para in parameters:
-        try:
-            value = para.findAll('strong')[0].text
-            key = " ".join(para.find('strong').next_sibling.split())
-            if key in ['Bed', 'Bath']:
-                key = key+'s'
-            parsedListing[key] = value
-        except:
-            None
+Each listing has a number of parameters, again simple stuff loop through them and save the information to the dictionary.
+```python
+parameters = listing.findAll('li')
+for para in parameters:
+    try:
+        value = para.findAll('strong')[0].text
+        key = " ".join(para.find('strong').next_sibling.split())
+        if key in ['Bed', 'Bath']:
+            key = key+'s'
+        parsedListing[key] = value
+    except:
+        None
 
 ```
 
-
-then i append it to the other data in my database.
-
-
+From here each parsed listing is appended to the Pandas DataFrame
 ```python
-
 df = df.append(parsedListing, ignore_index=True)
-
 ```
 
-
-and finally, saving the data as a CSV file for further analysis.
-
-
+Saving the DataFrame as a CSV file allows for further analysis, and data sharing.
 ```python
-
-export_csv = df.to_csv(status+'.csv',
-       index=None, header=True)
-
+export_csv = df.to_csv(status+'.csv', index=None, header=True)
 ```
-
-
-
-And to my astonishment, the deals that floated to the top were spot-on! Catching even the most obscure little deals hiding in the shadows.
-
-
-
-Property-Scrubber, my wife named “Cinderella” also allowed them to filter through all the suburbs in their reach, not only single suburbs at a time, but the best deal at any given time, anywhere!!
-
-
-
-This is how I went about it....
-
-
-Different strategies: Flips and Buy to rent. All real estate websites have varying information, most aren’t even consistent with where they include what detail — confusing floor area with site area....yeah.
-
-
-Different approaches, use room to average cost ratio.
-
-
-B2R — cost of room to average rent.
-
-
-There is still a portion of manual labour involved, having to open every deal to see if it is an outlier, or that gem you are looking for. But Cinderella provided a handy sorting tool to shortlist the listings in order of most to the least likely opportunities.  
