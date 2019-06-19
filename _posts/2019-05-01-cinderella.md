@@ -21,8 +21,7 @@ Not really having any better idea, they would take a best guess at a suburb wher
 Knowing my skills, they asked me whether I could help de-pain the process, some form of web-scrubber to isolate the information they were looking for...so I did.
 
 
-So for this project were going to use Python and its community driven libraries like, Pandas & BeautifulSoup.
-
+So for this project we’re going to use Python and its community driven libraries like, Pandas & BeautifulSoup.
 Python code block:
 ```python
 import datetime
@@ -32,7 +31,7 @@ from bs4 import BeautifulSoup as soup
 ```
 
 The idea is to loop through the listing pages of the property website. So, we need a couple of things.
-Firstly, some were the store the parsed listings, and secondly a way to get the web page html.
+Firstly, where to store the parsed listings, and secondly a way to get the web page html.
 ```python
 df = pd.DataFrame()
 pg = 1
@@ -46,20 +45,19 @@ while True:
         page_soup = soup(page_html, "html.parser")
 ```
 
-Once we start looping through the site pages, how do we know we are finished. As with all things in life there is trade-offs. I went with looking for the maximum page number in the pagination section. Simple enough just break the while loop when the current page count equals the max page count. Simple stuff.
+Next issue to resolve is to let the loop know when to stop. As with all things in life there are trade-offs, depending on which route you take. I went with the option of looking for the maximum page number in the pagination section which breaks the while loop when the current page count equals the max page count. Simple stuff.
 ```python
 pagination = page_soup.find('div', class_='pagination-holder').ul.find_all("a")
 page_count = max([int(tag.text) if (tag.text).isdigit() else 0 for tag in pagination])
 print(url,'of ' + str(page_count))
-
-if pg >= page_count:
-    break
-pg += 1
+        if pg >= page_count:
+            break
+        pg += 1
 ```
 
 Next step is to identify the portions of the html that covers only the listings on each page. For each of the pages a listing holder is defined that contains only the listings on that page.
 
-Then looping through the listings, we fetch the specific information of each listing visible on the listing holder page. The Property information is temporary stored in a python dictionary “parsedListing”.
+Then, looping through the listings, we fetch the specific information of each listing visible on the listing holder page. The Property information is temporarily stored in a python dictionary “parsedListing”.
 ```python
 listingHolder = page_soup.find_all('article', class_='block')
 
@@ -76,19 +74,18 @@ for listing in listingHolder:
 
 ```
 
-Each listing has a number of parameters, again simple stuff loop through them and save the information to the dictionary.
+Each listing has a number of parameters which we are trying to capture, so we run the loop through them again and save the information to the dictionary.
 ```python
-parameters = listing.findAll('li')
-for para in parameters:
-    try:
-        value = para.findAll('strong')[0].text
-        key = " ".join(para.find('strong').next_sibling.split())
-        if key in ['Bed', 'Bath']:
-            key = key+'s'
-        parsedListing[key] = value
-    except:
-        None
-
+    parameters = listing.findAll('li')
+    for para in parameters:
+        try:
+            value = para.findAll('strong')[0].text
+            key = " ".join(para.find('strong').next_sibling.split())
+            if key in ['Bed', 'Bath']:
+                key = key+'s'
+            parsedListing[key] = value
+        except:
+            None
 ```
 
 From here each parsed listing is appended to the Pandas DataFrame

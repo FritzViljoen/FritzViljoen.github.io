@@ -1,5 +1,5 @@
 ---
-title: "Cinderella Part2 - House Hunting - The Data Scientist Way"
+title: "House Hunting - The Data Scientist Way"
 date: 2019-06-15
 tags: [data wrangling, data science, messy data]
 header:
@@ -11,20 +11,19 @@ mathjax: "true"
 
 {% include figure image_path="/assets/images/cinderella.jpg" alt="Photo by Valentin Petkov on Unsplash" caption="Photo by Valentin Petkov on [**Unsplash**](https://unsplash.com)" %}
 
+Housing listings for the city of Cape Town was collected from a well-liked property website. Using a web scraper the data was collated in a batch of CSV files, and read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. For more on this, please see the Cinderella – Scrubbing Houses post.
+
 # Making Sense
 
 So, the next step was to make sense of the data and dress it to make it useable. Taking the CSV files, we read it, clean it, analyse it, add some additional functionality, then present it in a user-friendly interface. Essentially, it is the same data that is available to all on the property website, however I created a method of filtering and shortlisting the properties according to the specific user requirements.
 
-In this case, the client's brief was two-fold: As a property investor, she wanted to be able to easily identify potentially under-priced properties in a specific area, specifically for refurbishment, or " flipping" opportunities. Secondly, she wanted the average rental information for each area, in order to consider properties for Buy-to-Rent opportunities.
+In this case, the client's brief was two-fold: As a property investor, she wanted to be able to easily identify potentially under-priced properties in a specific area, specifically for refurbishment, or "flipping" opportunities. Secondly, she wanted the average rental information for each area, in order to consider properties for Buy-to-Rent opportunities.
 
-The end product still has a portion of manual labour involved, having to open a deal to see if it is an outlier, or that gem you are looking for, but Cinderella provided a handy sorting tool to shortlist the listings in order of most- to the least likely opportunities, based on the specific criteria.   
-
+The end product still has a portion of manual labour involved, having to open a listing to see whether it’s an outlier, or that gem you are looking for, but Cinderella 2.0 provided a handy sorting tool to shortlist the listings in order of most- to least likely opportunities, based on the specific criteria.   
 
 This is how I went about it:
 
 ## Data collation and clean-up
-Housing listings for the city of Cape Town was collected from a well-liked property website, using a web scraper the data was collated in a batch of CSV files. The data was read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project.
-
 In the CSV files, we collected the property information for different regions in South Africa and saved them separately. For this specific client, using Pandas again, we call in the region of Cape Town, both the rental and sales listings.  
 
 Python code block:
