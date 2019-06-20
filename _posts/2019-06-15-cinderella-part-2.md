@@ -11,7 +11,7 @@ mathjax: "true"
 
 {% include figure image_path="/assets/images/cinderella.jpg" alt="Photo by Valentin Petkov on Unsplash" caption="Photo by Valentin Petkov on [**Unsplash**](https://unsplash.com)" %}
 
-Housing listings for the city of Cape Town was collected from a well-liked property website. Using a web scraper the data was collated in a batch of CSV files, and read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. For more on this, please see the Cinderella – Scrubbing Houses post.
+Housing listings for the city of Cape Town was collected from a well-liked property website. Using a web scraper the data was collated in a batch of CSV files, and read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project. For more on this, please see the [Cinderella – Scrubbing Houses](https://fritzviljoen.github.io/cinderella/) post.
 
 # Making Sense
 

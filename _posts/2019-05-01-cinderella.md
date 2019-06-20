@@ -97,3 +97,5 @@ Saving the DataFrame as a CSV file allows for further analysis, and data sharing
 ```python
 export_csv = df.to_csv(status+'.csv', index=None, header=True)
 ```
+
+I you are interested where these csv files are used be sure to have a look at [House Hunting - The Data Scientist Way](https://fritzviljoen.github.io/cinderella-part-2/).
