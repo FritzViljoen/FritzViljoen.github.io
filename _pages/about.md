@@ -12,4 +12,4 @@ Because of my background in engineering, and probably having grown up on a farm,
 
 In my free time, I am an avid hiker, mountain biker, cross-fit enthusiast, and on-and-off pilot. It takes a lot of focus, confidence, and trust in the equipment to be 7000 feet in the air wrapped in a fiberglass cocoon which could take me all the way back down in seconds.
 
-When I am on the ground, I like the routine of a daily cross-fit session. I found that your physical well-being, is intricately connected with every other aspect of life, intellectually, emotionally, spiritually; and strangely enough, cross-fit has taught me a lot about my approach to life in general, my ability to grow stronger, and pushing myself out of my comfort zone to achieve my goals.
+I found that your physical well-being, is intricately connected with every other aspect of life, intellectually, emotionally, spiritually; and strangely enough, cross-fit has taught me a lot about my approach to life in general, my ability to grow stronger, and pushing myself out of my comfort zone to achieve my goals.
