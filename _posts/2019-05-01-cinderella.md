@@ -23,7 +23,7 @@ Knowing my skills, they asked me whether I could help de-pain the process, some 
 ### The Run Down
 Housing listings for the city of Cape Town were collected from a well-liked property website. Using a web scraper the data was collated in a batch of CSV files, and read with Python — Pandas as DataFrame objects. These DataFrames objects formed the backbone of the project.
 
-For the full code and step-by-step discussion, please refer to [Cinderella – Scrubbing Houses Jupyter Notebook](https://nbviewer.jupyter.org/github/FritzViljoen/Cinderella/blob/master/Scrubber.ipynb) post.
+For the full code and step-by-step discussion, please refer to [Cinderella – Scrubbing Houses Jupyter Notebook](https://nbviewer.jupyter.org/github/FritzViljoen/Cinderella/blob/master/Scrubber.ipynb?) post.
 
 
-I you are interested in the next chapter to see where these csv files were used, be sure to have a look at [House Hunting - The Data Scientist Way](https://fritzviljoen.github.io/cinderella-part-2/).
+I you are interested in the next chapter to see where these csv files were used, be sure to have a look at [House Hunting - The Data Scientist Way](https://fritzviljoen.github.io/cinderella-part-2?).
